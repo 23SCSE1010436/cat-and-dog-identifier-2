@@ -1,0 +1,57 @@
+import os
+import shutil
+import zipfile
+import requests
+from PIL import Image
+from io import BytesIO
+
+# Create folder structure
+base_dir = 'dog_cat_sample_dataset'
+os.makedirs(base_dir, exist_ok=True)
+for split in ['train', 'validation', 'test']:
+    for category in ['dogs', 'cats']:
+        os.makedirs(os.path.join(base_dir, split, category), exist_ok=True)
+
+# Public URLs (small free images as samples)
+dog_urls = [
+    'https://images.dog.ceo/breeds/hound-afghan/n02088094_1003.jpg',
+    'https://images.dog.ceo/breeds/hound-afghan/n02088094_1023.jpg',
+    'https://images.dog.ceo/breeds/hound-basset/n02088238_10110.jpg',
+    'https://images.dog.ceo/breeds/hound-blood/n02088466_10435.jpg',
+    'https://images.dog.ceo/breeds/labrador/n02099712_2375.jpg',
+]
+
+cat_urls = [
+    'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/3/3d/Large_Siamese_cat.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/0/0b/Cat_poster_1.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/0/09/Siam_lilacpoint.jpg',
+    'https://upload.wikimedia.org/wikipedia/commons/6/69/June_odd-eyed-cat.jpg',
+]
+
+# Download and save images
+def download_images(url_list, dest_folder):
+    for idx, url in enumerate(url_list):
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content)).convert('RGB')
+        img = img.resize((150, 150))
+        img.save(os.path.join(dest_folder, f'image_{idx+1}.jpg'))
+
+# Download samples
+download_images(dog_urls, os.path.join(base_dir, 'train', 'dogs'))
+download_images(cat_urls, os.path.join(base_dir, 'train', 'cats'))
+download_images(dog_urls[:2], os.path.join(base_dir, 'validation', 'dogs'))
+download_images(cat_urls[:2], os.path.join(base_dir, 'validation', 'cats'))
+download_images(dog_urls[2:4], os.path.join(base_dir, 'test', 'dogs'))
+download_images(cat_urls[2:4], os.path.join(base_dir, 'test', 'cats'))
+
+# Zip the folder
+zip_path = f"{base_dir}.zip"
+with zipfile.ZipFile(zip_path, 'w') as zipf:
+    for root, dirs, files in os.walk(base_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+            zipf.write(file_path, os.path.relpath(file_path, base_dir))
+
+print(f"✅ Dataset generated and zipped at: {zip_path}")
+# following code will automatically create a data set
