@@ -1,0 +1,45 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Sample data
+num_dogs = 500
+num_cats = 500
+
+# -------- PIE CHART --------
+labels = ['Dogs', 'Cats']
+sizes = [num_dogs, num_cats]
+colors = ['#ff9999','#66b3ff']
+
+plt.figure(figsize=(5,5))
+plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors, explode=(0.05, 0.05))
+plt.title('Dataset Distribution')
+plt.show()
+
+
+# -------- BAR CHART --------
+categories = ['Dogs', 'Cats']
+counts = [num_dogs, num_cats]
+
+plt.figure(figsize=(5,5))
+plt.bar(categories, counts, color=['#ff9999','#66b3ff'])
+plt.title('Number of Images per Class')
+plt.xlabel('Class')
+plt.ylabel('Number of Images')
+plt.show()
+
+
+# -------- LINE CHART --------
+epochs = np.arange(1, 11)
+train_accuracy = [0.60, 0.70, 0.78, 0.82, 0.85, 0.88, 0.90, 0.92, 0.93, 0.94]
+val_accuracy = [0.58, 0.68, 0.75, 0.80, 0.83, 0.86, 0.88, 0.89, 0.90, 0.92]
+
+plt.figure(figsize=(8,5))
+plt.plot(epochs, train_accuracy, 'bo-', label='Training Accuracy')
+plt.plot(epochs, val_accuracy, 'ro-', label='Validation Accuracy')
+plt.title('Model Accuracy Over Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.ylim(0.5, 1.0)
+plt.grid(True)
+plt.legend()
+plt.show()
